@@ -56,16 +56,16 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
+        print("cell for row at function begin")
         let cell = tableView.dequeueReusableCell(withIdentifier: "PhotoCell") as! PhotoCell //this allows us to reuse our custom cells
         
         let post = posts[indexPath.row]
-        
+
         if let photos = post.value(forKeyPath: "photos") as? [NSDictionary] {
             //photos exist
             let imageUrlString = photos[0].value(forKeyPath: "original_size.url") as? String
             if let imageUrl = URL(string: imageUrlString!) {
                 cell.photo.setImageWith(imageUrl)
-                self.tableView.reloadData()
             } else {
                 //URL(string: imageUrlString!) is nil
             }
