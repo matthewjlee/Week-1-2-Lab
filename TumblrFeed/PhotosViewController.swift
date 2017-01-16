@@ -42,6 +42,7 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
                         // This is how we get the 'response' field
                         let responseFieldDictionary = responseDictionary["response"] as! NSDictionary
                         self.posts = responseFieldDictionary["posts"] as! [NSDictionary]
+                        print("hello")
                         self.tableView.reloadData()
                     }
                 }
