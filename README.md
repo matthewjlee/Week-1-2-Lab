@@ -2,4 +2,4 @@
 Tumblr Client
 
 Tumblr Client Week 1-2 Lab with Optionals  
-[Imgur](http://i.imgur.com/VGLiotJ.gifv)  
+<a href="http://imgur.com/VGLiotJ"><img src="http://i.imgur.com/VGLiotJ.gif" title="source: imgur.com" /></a>
