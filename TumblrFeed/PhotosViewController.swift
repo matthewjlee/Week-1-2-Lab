@@ -9,11 +9,15 @@
 import UIKit
 import AFNetworking
 
-class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
 
     @IBOutlet weak var tableView: UITableView!
     
     var posts: [NSDictionary] = [] //set initial value to empty array bc we don't want to deal with optionals
+    let refreshControl = UIRefreshControl()
+    var initialLoad = false //to check if the view has loaded
+    var isMoreDataLoading = false //to prevent overloading requests to server
+    var loadingMoreView:InfiniteScrollActivityView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,8 +26,40 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
         tableView.dataSource = self
         
         tableView.rowHeight = 240 //set static row height
+        initialLoad = true
+        
+        //set up infinite scroll loading indicator
+        let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+        loadingMoreView = InfiniteScrollActivityView(frame: frame)
+        loadingMoreView!.isHidden = true
+        tableView.addSubview(loadingMoreView!)
+        
+        var insets = tableView.contentInset
+        insets.bottom += InfiniteScrollActivityView.defaultHeight
+        tableView.contentInset = insets
 
         // fire network request to tumblr client
+        let url = URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV")
+        let request = URLRequest(url: url!)
+        let session = URLSession (
+            configuration: URLSessionConfiguration.default,
+            delegate:nil,
+            delegateQueue: OperationQueue.main
+        )
+        
+        networkRequest()
+        
+        //Initialize refresh control
+        refreshControl.addTarget(self, action: #selector(refreshControlAction(refreshControl:)), for: UIControlEvents.valueChanged)
+        tableView.insertSubview(refreshControl, at: 0)
+    }
+    
+    func refreshControlAction(refreshControl: UIRefreshControl) {
+        networkRequest()
+    }
+    
+    
+    func networkRequest() {
         let url = URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV")
         let request = URLRequest(url: url!)
         let session = URLSession (
@@ -37,17 +73,48 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
             completionHandler: { (data, response, error) in
                 if let data = data {
                     if let responseDictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary {
-                    
+                        
+                        //update flag
+                        self.isMoreDataLoading = false
+                        self.loadingMoreView!.stopAnimating()
+                        
                         // Recall there are two fields in the response dictionary, 'meta' and 'response'.
                         // This is how we get the 'response' field
                         let responseFieldDictionary = responseDictionary["response"] as! NSDictionary
                         self.posts = responseFieldDictionary["posts"] as! [NSDictionary]
                         print("hello")
                         self.tableView.reloadData()
+                        if self.initialLoad == true {
+                            self.refreshControl.endRefreshing()
+                        }
                     }
                 }
         });
         task.resume()
+
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if (!isMoreDataLoading) {
+            
+            //calculate position of one screen length before the bottom of the results
+            let scrollViewContentHeight = tableView.contentSize.height
+            let scrollOffsetThreshold = scrollViewContentHeight - tableView.bounds.size.height
+            
+            //when the user has scrolled past the threshold, start requesting
+            if (scrollView.contentOffset.y > scrollOffsetThreshold && tableView.isDragging) {
+                isMoreDataLoading = true
+                
+                //update position of loading more view, and start loading indicator
+                let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
+                loadingMoreView?.frame = frame
+                loadingMoreView!.startAnimating()
+                
+                //load more results
+                networkRequest()
+            }
+            
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -74,6 +141,12 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
         }
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        print("does this reach here")
+        //this gets rid of the gray selection effect
     }
 
     override func didReceiveMemoryWarning() {
