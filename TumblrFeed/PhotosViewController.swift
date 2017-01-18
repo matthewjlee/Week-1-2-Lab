@@ -117,8 +117,44 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
         }
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return posts.count
+    }
+ 
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        //return posts.count
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: 320, height: 50))
+        headerView.backgroundColor = UIColor(white: 1, alpha: 0.9)
+        
+        let profileView = UIImageView(frame: CGRect(x: 10, y: 10, width: 30, height: 30))
+        profileView.clipsToBounds = true
+        profileView.layer.cornerRadius = 15;
+        profileView.layer.borderColor = UIColor(white: 0.7, alpha: 0.8).cgColor
+        profileView.layer.borderWidth = 1;
+        
+        // Set the avatar
+        profileView.setImageWith(NSURL(string:"https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/avatar")! as URL)
+        headerView.addSubview(profileView)
+        
+        // Add a UILabel for the date here
+        let label = UILabel(frame: CGRect(x: 50, y: 10, width: 240, height: 30))
+        // Use the section number to get the right URL
+        let post = posts[section]
+        if let date = post.value(forKeyPath: "date") as? String {
+           label.text = date
+           headerView.addSubview(label)
+        }
+
+        return headerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 30
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -126,7 +162,7 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
         print("cell for row at function begin")
         let cell = tableView.dequeueReusableCell(withIdentifier: "PhotoCell") as! PhotoCell //this allows us to reuse our custom cells
         
-        let post = posts[indexPath.row]
+        let post = posts[indexPath.section] //use section instead of row
 
         if let photos = post.value(forKeyPath: "photos") as? [NSDictionary] {
             //photos exist
@@ -145,7 +181,6 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        print("does this reach here")
         //this gets rid of the gray selection effect
     }
 
@@ -163,7 +198,7 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
         // Pass the selected object to the new view controller.
         var viewController = segue.destination as! PhotoDetailsViewController
         var indexPath = tableView.indexPath(for: sender as! UITableViewCell)
-        let post = posts[(indexPath?.row)!]
+        let post = posts[(indexPath?.section)!] //section not row anymore
         if let photos = post.value(forKeyPath: "photos") as? [NSDictionary] {
             //photos exist
             let imageUrlString = photos[0].value(forKeyPath: "original_size.url") as? String
@@ -172,6 +207,10 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
             } else {
                 //URL(string: imageUrlString!) is nil
             }
+        }
+        
+        if let caption = post.value(forKeyPath: "caption") as? String {
+            viewController.captionDescription = caption
         }
         
         

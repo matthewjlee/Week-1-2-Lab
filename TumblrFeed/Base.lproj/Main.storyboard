@@ -26,7 +26,7 @@
                                         <rect key="frame" x="0.0" y="28" width="320" height="178"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="vJl-SD-XEh" id="3ch-hp-tCv">
-                                            <rect key="frame" x="0.0" y="0.0" width="287" height="177"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="287" height="177.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" id="iSp-72-K4R">
@@ -66,17 +66,39 @@
                                 <rect key="frame" x="33" y="102" width="255" height="177"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="2Hm-m6-PdE">
+                                <rect key="frame" x="33" y="305" width="255" height="243"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="sqd-tn-1ht"/>
                     <connections>
+                        <outlet property="caption" destination="2Hm-m6-PdE" id="zkC-Hg-hjI"/>
                         <outlet property="photo" destination="cbo-25-Ri7" id="3MG-q9-H7c"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fhl-yR-C6D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2112" y="144"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="aJ0-67-WCl">
+            <objects>
+                <viewController id="4nx-qg-JT7" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="sAS-Yk-MAU">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xfP-Ar-6Es" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2546" y="149"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="TUo-Kv-4Zr">

@@ -1,27 +1,19 @@
 //
-//  PhotoDetailsViewController.swift
+//  FullScreenPhotoViewController.swift
 //  TumblrFeed
 //
-//  Created by Matthew Lee on 1/17/17.
+//  Created by Matthew Lee on 1/18/17.
 //  Copyright © 2017 Matthew Lee. All rights reserved.
 //
 
 import UIKit
 
-class PhotoDetailsViewController: UIViewController {
+class FullScreenPhotoViewController: UIViewController {
 
-    var photoUrl: URL!
-    var captionDescription: String!
-    
-    @IBOutlet weak var caption: UILabel!
-    @IBOutlet weak var photo: UIImageView!
-    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        photo.setImageWith(photoUrl)
-        caption.text = captionDescription
     }
 
     override func didReceiveMemoryWarning() {
