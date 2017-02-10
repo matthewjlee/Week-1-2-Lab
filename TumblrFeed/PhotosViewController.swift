@@ -18,6 +18,7 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
     var initialLoad = false //to check if the view has loaded
     var isMoreDataLoading = false //to prevent overloading requests to server
     var loadingMoreView:InfiniteScrollActivityView?
+    var counter = 0;
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +41,7 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
 
         // fire network request to tumblr client
         let url = URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV")
+        //counter += 20;
         let request = URLRequest(url: url!)
         let session = URLSession (
             configuration: URLSessionConfiguration.default,
@@ -60,7 +62,8 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
     
     
     func networkRequest() {
-        let url = URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV")
+        let url = URL(string: "https://api.tumblr.com/v2/blog/humansofnewyork.tumblr.com/posts/photo?api_key=Q6vHoaVm5L1u2ZAW1fqv3Jw48gFzYVg9P0vH0VHl3GVy6quoGV&offset=\(self.counter)")
+        counter += 20;
         let request = URLRequest(url: url!)
         let session = URLSession (
             configuration: URLSessionConfiguration.default,
@@ -81,7 +84,7 @@ class PhotosViewController: UIViewController, UITableViewDelegate, UITableViewDa
                         // Recall there are two fields in the response dictionary, 'meta' and 'response'.
                         // This is how we get the 'response' field
                         let responseFieldDictionary = responseDictionary["response"] as! NSDictionary
-                        self.posts = responseFieldDictionary["posts"] as! [NSDictionary]
+                        self.posts += responseFieldDictionary["posts"] as! [NSDictionary]
                         print("hello")
                         self.tableView.reloadData()
                         if self.initialLoad == true {
